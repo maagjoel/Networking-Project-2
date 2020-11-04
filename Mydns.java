@@ -5,37 +5,39 @@
  */
 package mydns;
 
-import java.io.IOException;
 import java.net.*;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ListIterator;
+
 /**
  *
  * @author victorialariot
  */
 public class Mydns {
     public int MAX_PACKET_SIZE = 512;
-    private byte[] server = new byte[4];
-    String address;
-    private String name;
-    private int port = 53;
-    String queryType = "A";
+    private static byte[] server = new byte[4];
+    private static String address;
+    private static String name;
+    private static int port = 53;
+    private static String queryType = "A";
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        name = args[0];
+        address = args[1];
+        makeRequest();
     }
     
-    public void makeRequest() {
+    public static void makeRequest() {
         System.out.println("DNS Server to query: " + address);
         
         try {
+
             //Create Datagram socket and request object(s)
             DatagramSocket socket = new DatagramSocket();
-            InetAddress inetaddress = InetAddress.getByAddress(server);
+            InetAddress inetaddress = InetAddress.getByName(address);
+            server = inetaddress.getAddress();
             Request request = new Request(name, queryType);
 
             byte[] requestBytes = request.getRequest();
@@ -59,10 +61,9 @@ public class Mydns {
         } catch (SocketTimeoutException e) {
             System.out.println("ERROR\tSocket Timeout");
             System.out.println("Reattempting request...");
-            pollRequest(++retryNumber);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
-    }
+    
 }

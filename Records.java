@@ -5,26 +5,23 @@
  */
 package mydns;
 
-import java.net.ServerSocket;
-
 /**
  *
  * @author victorialariot
  */
 public class Records {
-    String server;
+    String domain;
+    String nameServer;
     String queryType;
     int recordLength;
     private int byteLength;
     
-    public Records (String server, String queryType, int recordLength) {
-        this.server = server;
-        this.queryType = queryType;
-        this.recordLength = recordLength;
+    public Records () {
+        
     }
     
     public void outputRecord() {
-        switch(this.queryType) {
+        switch(queryType) {
             case "A":
                 this.outputATypeRecords();
                 break;
@@ -36,12 +33,11 @@ public class Records {
     }
     
     private void outputATypeRecords() {
-        System.out.println("IP\t" + this.domain + "\t" + this.timeToLive + "\t" + authString);
+        System.out.println("Name: " + nameServer + "\tIP: " + domain);
     }
 
     private void outputNSTypeRecords() {
-        String authString = this.auth ? "auth" : "nonauth";
-    	System.out.println("NS\t" + this.domain + "\t" + this.timeToLive + "\t" + authString);
+    	System.out.println("Name: " +  "\tName Server: " + nameServer);
     }
     
     public int getByteLength() {
@@ -60,13 +56,23 @@ public class Records {
         this.recordLength = recordLength;
     }
 
-    public String getServer() {
-        return server;
+    public String getDomain() {
+        return domain;
     }
 
-    public void setServer(String server) {
-        this.server = server;
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
+
+    public String getNameServer() {
+        return nameServer;
+    }
+
+    public void setNameServer(String nameServer) {
+        this.nameServer = nameServer;
+    }
+
+    
 
     public String getQueryType() {
         return queryType;

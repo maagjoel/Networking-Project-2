@@ -63,9 +63,9 @@ public class Response {
     public void outputResponse() {
         System.out.println();
         System.out.println("Reply received. Content overview:");
-        System.out.println(ANCount + "Answers.");
-        System.out.println(NSCount + "Intermediate Name Servers.");
-        System.out.println(ARCount + "Additional Information Records.");
+        System.out.println(ANCount + " Answers.");
+        System.out.println(NSCount + " Intermediate Name Servers.");
+        System.out.println(ARCount + " Additional Information Records.");
         
         System.out.println("Answer Section:");
        
@@ -73,11 +73,16 @@ public class Response {
         	record.outputRecord();	
         }
 
-        System.out.println();
+        if (this.NSCount > 0) {
+            System.out.println("Authoritive Section (" + this.ARCount + " answerRecords)***");
+            for (Records record : additionalRecords){
+            	record.outputRecord();
+            }
+        }
 
         if (this.ARCount > 0) {
             System.out.println("***Additional Section (" + this.ARCount + " answerRecords)***");
-            for (DNSRecord record : additionalRecords){
+            for (Records record : additionalRecords){
             	record.outputRecord();
             }
         }
@@ -153,14 +158,15 @@ public class Response {
     	return (b >> position) & 1;
     }
      private Records parseAnswer(int index){
-    	
+    	Records result = new Records();
+        
         String domain = "";
         int countByte = index;
 
         domain = getDomainFromIndex(countByte);
         countByte += getBytesFromDomain(domain);
         
-          
+        result.setNameServer(domain);
 
         //TYPE
         byte[] ans_type = new byte[2];
@@ -177,7 +183,7 @@ public class Response {
             System.out.println("INVALID QUESTION TYPE.");
         }
         
-       
+        result.setQueryType(type);
 
         countByte += 6;
         
@@ -186,14 +192,15 @@ public class Response {
         ByteBuffer wrapped = ByteBuffer.wrap(RDLength);
         int rdLength = wrapped.getShort();
 
-        Records result = new Records(domain, type, rdLength);
+        result.setRecordLength(rdLength);
+        
         countByte +=2;
         switch (result.getQueryType()) {
             case "A":
-                result.setServer(parseATypeRDATA(rdLength, countByte));
+                result.setDomain(parseATypeRDATA(rdLength, countByte));
                 break;
             case "NS":
-                result.setServer(parseNSTypeRDATA(rdLength, countByte));
+                result.setDomain(parseNSTypeRDATA(rdLength, countByte));
                 break;
         }
         result.setByteLength(countByte + rdLength - index);
