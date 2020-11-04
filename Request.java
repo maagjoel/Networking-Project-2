@@ -38,9 +38,13 @@ public class Request {
 		header.put((byte)0x01);
 		header.put((byte)0x00);
 		header.put((byte)0x00);
-		header.put((byte)0x01);
+		header.put((byte)0x00);
+                header.put((byte)0x00);
+		header.put((byte)0x00);
+                header.put((byte)0x00);
+		header.put((byte)0x00);
+                header.put((byte)0x00);
 		
-		//lines 3, 4, and 5 will be all 0s, which is what we want
 		return header.array();
 	}
         
@@ -59,7 +63,13 @@ public class Request {
             question.put((byte) 0x00);
 
 		//Add Query Type
-		question.put(hexStringToByteArray("000" + hexValueFromQueryType(type)));
+                if (type.equals("A")) {
+                    question.put((byte) 0x01);
+                } else if (type.equals("NS")) {
+                    question.put((byte) 0x02);
+                } else{
+                    System.out.println("INVALID QUERY TYPE");
+                }
 		question.put((byte) 0x00);
 		//Add Query Class - always  0x0001 for internet addresses
 		question.put((byte) 0x0001);
