@@ -6,6 +6,7 @@
 package mydns;
 
 import java.net.*;
+import java.util.Arrays;
 
 /**
  *
@@ -13,7 +14,7 @@ import java.net.*;
  */
 public class Mydns {
     public int MAX_PACKET_SIZE = 512;
-    private static byte[] server = new byte[4];
+    //private static byte[] server = new byte[5];
     private static String address;
     private static String name;
     private static int port = 53;
@@ -37,7 +38,8 @@ public class Mydns {
             //Create Datagram socket and request object(s)
             DatagramSocket socket = new DatagramSocket();
             InetAddress inetaddress = InetAddress.getByName(address);
-            server = inetaddress.getAddress();
+           // server = inetaddress.getAddress();
+            //System.out.println(Arrays.toString(server));
             Request request = new Request(name, queryType);
 
             byte[] requestBytes = request.getRequest();
@@ -45,12 +47,12 @@ public class Mydns {
 
             DatagramPacket requestPacket = new DatagramPacket(requestBytes, requestBytes.length, inetaddress, port);
             DatagramPacket responsePacket = new DatagramPacket(responseBytes, responseBytes.length);
-
+            
             //Send packet and time response
             socket.send(requestPacket);
             socket.receive(responsePacket);
             socket.close();
-
+            
             Response response = new Response(responsePacket.getData(), requestBytes.length, queryType);
             response.outputResponse();
 

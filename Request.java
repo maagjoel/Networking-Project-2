@@ -32,17 +32,20 @@ public class Request {
         
         private byte[] createRequestHeader(){
 		ByteBuffer header = ByteBuffer.allocate(12);
-		byte[] randomID = new byte[2]; 
-		new Random().nextBytes(randomID);
-		header.put(randomID);
+		//byte ID = new byte[123]; 
+		//new Random().nextBytes(ID);
+		//header.put(ID);
+                header.put((byte)0x13);
+                header.put((byte)0x50);
+		header.put((byte)0x00);
+		header.put((byte)0x00);
+		header.put((byte)0x00);
 		header.put((byte)0x01);
-		header.put((byte)0x00);
-		header.put((byte)0x00);
-		header.put((byte)0x00);
                 header.put((byte)0x00);
 		header.put((byte)0x00);
                 header.put((byte)0x00);
 		header.put((byte)0x00);
+                header.put((byte)0x00);
                 header.put((byte)0x00);
 		
 		return header.array();
@@ -63,16 +66,18 @@ public class Request {
             question.put((byte) 0x00);
 
 		//Add Query Type
-                if (type.equals("A")) {
-                    question.put((byte) 0x01);
-                } else if (type.equals("NS")) {
-                    question.put((byte) 0x02);
-                } else{
-                    System.out.println("INVALID QUERY TYPE");
-                }
-		question.put((byte) 0x00);
+                //if (type.equals("A")) {
+                    question.put((byte) 0x00);
+                //} else if (type.equals("NS")) {
+                   // question.put((byte) 0x02);
+               // } else{
+                  //  System.out.println("INVALID QUERY TYPE");
+                //}
+		question.put((byte) 0x01);
+                
 		//Add Query Class - always  0x0001 for internet addresses
-		question.put((byte) 0x0001);
+		question.put((byte) 0x00);
+                question.put((byte) 0x01);
 
 		return question.array();
 	}

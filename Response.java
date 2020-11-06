@@ -114,7 +114,6 @@ public class Response {
         ID[0] = response[0];
         ID[1] = response[1];
         this.ID = ID;
-
         //QR
         this.QR = getBit(response[2], 7) == 1;
 
@@ -132,26 +131,28 @@ public class Response {
 
         //RCODE
         this.RCode = response[3] & 0x0F;
+        
 
         //QDCount
         byte[] QDCount = { response[4], response[5] };
         ByteBuffer wrapped = ByteBuffer.wrap(QDCount);
         this.QDCount = wrapped.getShort();
-
+        
         //ANCount
         byte[] ANCount = { response[6], response[7] };
         wrapped = ByteBuffer.wrap(ANCount);
         this.ANCount = wrapped.getShort();
-
+        
         //NSCount
         byte[] NSCount = { response[8], response[9] };
         wrapped = ByteBuffer.wrap(NSCount);
         this.NSCount = wrapped.getShort();
-
+        
         //ARCount
         byte[] ARCount = { response[10], response[11] };
         wrapped = ByteBuffer.wrap(ARCount);
         this.ARCount = wrapped.getShort();
+        
     }
 
      private int getBit(byte b, int position) {
