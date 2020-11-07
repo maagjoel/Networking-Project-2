@@ -11,7 +11,7 @@ import java.nio.ByteBuffer;
 
 /**
  *
- * @author victorialariot
+ * @author gretel
  */
 public class Response {
     private byte[] response;
@@ -29,7 +29,8 @@ public class Response {
 		this.queryType = queryType;
 
         this.validateResponseQuestionType();
-        this.parseHeader();
+        this.parseHeader();  
+        
         int offSet = requestSize;
         
         if (ANCount != 0){
@@ -39,6 +40,7 @@ public class Response {
         	answerRecords[i] = this.parseAnswer(offSet);
         	offSet += answerRecords[i].getByteLength();
             }
+            
         }
         
         if (NSCount != 0) {
@@ -53,9 +55,11 @@ public class Response {
             additionalRecords = new Records[ARCount];
             for(int i = 0; i < ARCount; i++){
         	additionalRecords[i] = this.parseAnswer(offSet);
-        	offSet += additionalRecords[i].getByteLength();
+               	offSet += additionalRecords[i].getByteLength();
             }   
         }
+        
+        
         
         
     }
@@ -100,7 +104,8 @@ public class Response {
         if (qType[0] == 0) {
             if (qType[1] == 1) {
                 queryType = "A";
-            } else if (qType[1] == 2) {
+            } 
+        else if (qType[1] == 2) {
                 queryType = "NS";
             }
         } else {
@@ -143,15 +148,18 @@ public class Response {
         wrapped = ByteBuffer.wrap(ANCount);
         this.ANCount = wrapped.getShort();
         
+               
         //NSCount
         byte[] NSCount = { response[8], response[9] };
         wrapped = ByteBuffer.wrap(NSCount);
         this.NSCount = wrapped.getShort();
         
+              
         //ARCount
         byte[] ARCount = { response[10], response[11] };
         wrapped = ByteBuffer.wrap(ARCount);
         this.ARCount = wrapped.getShort();
+        
         
     }
 
@@ -186,7 +194,7 @@ public class Response {
         
         result.setQueryType(type);
 
-        countByte += 6;
+        countByte += 8;
         
         //RDLength
         byte[] RDLength = { response[countByte], response[countByte + 1] };
@@ -272,4 +280,6 @@ public class Response {
 		}
     	return word;
     }
+    
+
 }
