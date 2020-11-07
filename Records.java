@@ -21,13 +21,11 @@ public class Records {
     }
     
     public void outputRecord() {
-        switch(queryType) {
-            case "A":
-                this.outputATypeRecords();
-                break;
-            case "NS":
+        if(queryType.equals("A")) {
+            this.outputATypeRecords();
+        }
+        else if (queryType.equals("NS")) {
                 this.outputNSTypeRecords();
-                break;
         }
     
     }
@@ -37,7 +35,7 @@ public class Records {
     }
 
     private void outputNSTypeRecords() {
-    	System.out.println("Name: " +  "\tName Server: " + nameServer);
+    	System.out.println("Name: " + nameServer + "\tName Server: " + domain);
     }
     
     public int getByteLength() {

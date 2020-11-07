@@ -71,21 +71,22 @@ public class Response {
         System.out.println(NSCount + " Intermediate Name Servers.");
         System.out.println(ARCount + " Additional Information Records.");
         
-        System.out.println("Answer Section:");
-       
-        for (Records record : answerRecords){
+        System.out.println("\nAnswer Section:");
+        if (ANCount > 0) {
+            for (Records record : answerRecords){
         	record.outputRecord();	
+            }
         }
 
         if (this.NSCount > 0) {
-            System.out.println("Authoritive Section (" + this.ARCount + " answerRecords)***");
-            for (Records record : additionalRecords){
+            System.out.println("\nAuthoritive Section:");
+            for (Records record : authorativeRecords){
             	record.outputRecord();
             }
         }
 
         if (this.ARCount > 0) {
-            System.out.println("***Additional Section (" + this.ARCount + " answerRecords)***");
+            System.out.println("\nAdditional Information Section:");
             for (Records record : additionalRecords){
             	record.outputRecord();
             }
@@ -172,8 +173,9 @@ public class Response {
         String domain = "";
         int countByte = index;
 
-        domain = getDomainFromIndex(countByte);
-        countByte += getBytesFromDomain(domain);
+        rDataEntry domainResult = getDomainFromIndex(countByte);
+        countByte += domainResult.getBytes();
+        domain = domainResult.getDomain();
         
         result.setNameServer(domain);
 
@@ -183,9 +185,9 @@ public class Response {
         ans_type[1] = response[countByte + 1];
         String type = "";
         if (ans_type[0] == 0) {
-            if (ans_type[1] == 1) {
+            if (ans_type[1] == 0x01) {
                 type = "A";
-            } else if (ans_type[1] == 2) {
+            } else if (ans_type[1] == 0x02) {
                 type = "NS";
             }
         } else {
@@ -229,16 +231,18 @@ public class Response {
     }
 
     private String parseNSTypeRDATA(int rdLength, int countByte) {
-		String nameServer = getDomainFromIndex(countByte);
+		rDataEntry result = getDomainFromIndex(countByte);
+		String nameServer = result.getDomain();
     	
     	return nameServer;
     }
     
-     private String getDomainFromIndex(int index){
+     private rDataEntry getDomainFromIndex(int index){
+    	rDataEntry result = new rDataEntry();
     	int wordSize = response[index];
     	String domain = "";
     	boolean start = true;
-
+    	int count = 0;
     	while(wordSize != 0){
 			if (!start){
 				domain += ".";
@@ -246,30 +250,22 @@ public class Response {
 	    	if ((wordSize & 0xC0) == (int) 0xC0) {
 	    		byte[] offset = { (byte) (response[index] & 0x3F), response[index + 1] };
 	            ByteBuffer wrapped = ByteBuffer.wrap(offset);
-	            domain += getDomainFromIndex(wrapped.getShort());
+	            domain += getDomainFromIndex(wrapped.getShort()).getDomain();
 	            index += 2;
+	            count +=2;
 	            wordSize = 0;
 	    	}else{
 	    		domain += getWordFromIndex(index);
 	    		index += wordSize + 1;
+	    		count += wordSize + 1;
 	    		wordSize = response[index];
 	    	}
             start = false;
             
     	}
-    	return domain;
-
-    }
-     
-    private int getBytesFromDomain(String domain){
-        int byteLength = 0;
-		String[] items = domain.split("\\.");
-		for(int i=0; i < items.length; i ++){
-			// 1 byte length for the number value and then another for each character
-			//www.mcgill.ca = 3, w, w, w, 6, m, c, g, i, l, l, 2, c, a = 14 byteLength
-			byteLength += items[i].length() + 1;
-		}
-		return byteLength;
+    	result.setDomain(domain);
+    	result.setBytes(count);
+    	return result;
     }
     
     private String getWordFromIndex(int index){
@@ -279,6 +275,14 @@ public class Response {
     		word += (char) response[index + i + 1];
 		}
     	return word;
+    }
+
+    public int getANCount() {
+        return ANCount;
+    }
+
+    public Records[] getAdditionalRecords() {
+        return additionalRecords;
     }
     
 

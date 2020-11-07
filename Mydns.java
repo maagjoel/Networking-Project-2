@@ -55,6 +55,8 @@ public class Mydns {
             
             Response response = new Response(responsePacket.getData(), requestBytes.length, queryType);
             response.outputResponse();
+            
+           
 
         } catch (SocketException e) {
             System.out.println("ERROR\tCould not create socket");
