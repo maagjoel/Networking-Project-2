@@ -12,7 +12,7 @@ Java
 
 Compiling instructions:
 
-navigate on your computer to the directory that contains our "mydns"
+Navigate on your computer to the directory that contains our "mydns"
 folder from your terminal. Once on there, run the command
 javac *.java
 
