@@ -21,13 +21,17 @@ public class Records {
     }
     
     public void outputRecord() {
+                
         switch(queryType) {
             case "A":
-                this.outputATypeRecords();
+                System.out.println("Name: " + nameServer + "\tIP: " + domain);
                 break;
             case "NS":
-                this.outputNSTypeRecords();
+                System.out.println("Name: " +  "\tName Server: " + nameServer);
                 break;
+            default:
+                System.out.println("This is the default" + nameServer);
+           
         }
     
     }

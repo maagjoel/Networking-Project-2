@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 /**
  *
- * @author victorialariot
+ * @author gretel
  */
 public class Mydns {
     public int MAX_PACKET_SIZE = 512;
@@ -27,10 +27,10 @@ public class Mydns {
         // TODO code application logic here
         name = args[0];
         address = args[1];
-        makeRequest();
+        makeRequest(address);
     }
     
-    public static void makeRequest() {
+    public static void makeRequest(String address) {
         System.out.println("DNS Server to query: " + address);
         
         try {
@@ -54,7 +54,17 @@ public class Mydns {
             socket.close();
             
             Response response = new Response(responsePacket.getData(), requestBytes.length, queryType);
+            
+            // we need to call method recursively so that it always calls the first ip address of the additional info section. I'm pretty sure the name can stay the same each time. 
+
+            
             response.outputResponse();
+            
+            while(response.getANCount() != 1)
+            {
+                makeRequest(response.getAuthorativeRecords()[0].getDomain());
+            }
+            
 
         } catch (SocketException e) {
             System.out.println("ERROR\tCould not create socket");

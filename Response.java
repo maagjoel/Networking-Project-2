@@ -18,11 +18,20 @@ public class Response {
     private byte[] ID;
     private boolean QR, AA, TC, RD, RA;
     private int RCode, QDCount, ANCount, NSCount, ARCount;
+
+       public int getANCount() {
+        return ANCount;
+    }
+    
     private String queryType;
     private boolean noRecords = false;
     private Records[] answerRecords;
     private Records[] authorativeRecords;
     private Records[] additionalRecords;
+
+    public Records[] getAuthorativeRecords() {
+        return authorativeRecords;
+    }
     
     public Response(byte[] response, int requestSize, String queryType) {
 		this.response = response;
@@ -73,19 +82,23 @@ public class Response {
         
         System.out.println("Answer Section:");
        
-        for (Records record : answerRecords){
+        if(this.ANCount >0){
+            for (Records record : answerRecords){
         	record.outputRecord();	
+            }
         }
+        
 
         if (this.NSCount > 0) {
-            System.out.println("Authoritive Section (" + this.ARCount + " answerRecords)***");
+            System.out.println("Authoritive Section: ");
             for (Records record : additionalRecords){
             	record.outputRecord();
             }
         }
 
+        
         if (this.ARCount > 0) {
-            System.out.println("***Additional Section (" + this.ARCount + " answerRecords)***");
+            System.out.println("Additional Information Section:");
             for (Records record : additionalRecords){
             	record.outputRecord();
             }

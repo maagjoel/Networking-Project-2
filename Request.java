@@ -10,7 +10,7 @@ import java.util.Random;
 
 /**
  *
- * @author victorialariot
+ * @author gretel
  */
 public class Request {
     
